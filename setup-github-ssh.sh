@@ -46,12 +46,14 @@ print_success "SSH key generated!"
 print_status "Starting ssh-agent..."
 eval "$(ssh-agent -s)"
 
-# Add SSH key to ssh-agent
-print_status "Adding SSH key to ssh-agent..."
-ssh-add ~/.ssh/id_ed25519
+# Add SSH key to ssh-agent and macOS keychain
+print_status "Adding SSH key to ssh-agent and macOS keychain..."
+ssh-add --apple-use-keychain ~/.ssh/id_ed25519
 
-# Create/update SSH config for automatic key loading
-print_status "Configuring SSH..."
+print_success "SSH key added to keychain!"
+
+# Create/update SSH config for automatic key loading on macOS
+print_status "Configuring SSH for macOS..."
 mkdir -p ~/.ssh
 chmod 700 ~/.ssh
 
@@ -60,6 +62,10 @@ Host github.com
   AddKeysToAgent yes
   UseKeychain yes
   IdentityFile ~/.ssh/id_ed25519
+
+Host *
+  AddKeysToAgent yes
+  UseKeychain yes
 EOF
 
 chmod 600 ~/.ssh/config
@@ -76,12 +82,6 @@ echo "================================================"
 cat ~/.ssh/id_ed25519.pub
 echo "================================================"
 echo ""
-echo "Next steps:"
-echo "1. Copy the SSH key above (it's already in your clipboard if pbcopy worked)"
-echo "2. Go to: https://github.com/settings/ssh/new"
-echo "3. Paste the key and give it a title (e.g., 'Mac M4 Pro')"
-echo "4. Click 'Add SSH key'"
-echo ""
 
 # Try to copy to clipboard
 if command -v pbcopy &> /dev/null; then
@@ -92,15 +92,45 @@ else
 fi
 
 echo ""
-read -p "Press ENTER after you've added the key to GitHub..."
+print_warning "IMPORTANT: You MUST add this key to GitHub before continuing!"
+echo ""
+echo "Steps to add the key to GitHub:"
+echo "1. Open this URL in your browser: https://github.com/settings/ssh/new"
+echo "2. In the 'Title' field, enter: Mac M4 Pro (or any name you prefer)"
+echo "3. In the 'Key' field, paste the key (Cmd+V - it's already copied)"
+echo "4. Click the green 'Add SSH key' button"
+echo "5. Confirm with your GitHub password if prompted"
+echo ""
 
-# Test the connection
+# Open GitHub in browser automatically
+if command -v open &> /dev/null; then
+    print_status "Opening GitHub SSH settings in your browser..."
+    open "https://github.com/settings/ssh/new"
+    echo ""
+fi
+
+read -p "Press ENTER after you've added the key to GitHub and clicked 'Add SSH key'..."
+
+# Test the connection with better error handling
 echo ""
 print_status "Testing GitHub connection..."
 if ssh -T git@github.com 2>&1 | grep -q "successfully authenticated"; then
-    print_success "✓ Successfully connected to GitHub!"
+    echo ""
+    print_success "🎉 Successfully connected to GitHub!"
+    print_success "Your SSH key is working correctly!"
 else
-    print_warning "Connection test unclear - try running: ssh -T git@github.com"
+    echo ""
+    print_warning "⚠️  Connection test failed."
+    echo ""
+    echo "Please verify:"
+    echo "1. Did you add the key to GitHub? https://github.com/settings/keys"
+    echo "2. Did you click 'Add SSH key' button?"
+    echo "3. Try running this command to see the error:"
+    echo "   ssh -T git@github.com"
+    echo ""
+    echo "If you see 'Permission denied (publickey)', the key wasn't added to GitHub yet."
+    echo "If you see 'successfully authenticated', it's working!"
+    exit 1
 fi
 
 echo ""
