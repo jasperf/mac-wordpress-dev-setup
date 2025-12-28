@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Mac M4 Pro Web Developer Setup Script
-# This script installs: Xcode CLI Tools, Homebrew, Git, GitHub CLI, Lima, PHP, Composer, MariaDB, Laravel Valet, WP-CLI, Node.js (with fnm), pnpm, VS Code, Docker, Warp, Claude, and Sequel Ace
+# This script installs: Xcode CLI Tools, Homebrew, Git, GitHub CLI, Lima, PHP, Composer, MariaDB, Laravel Valet, WP-CLI, Ansible, Trellis CLI, Node.js (with fnm), pnpm, VS Code, Docker, Warp, Claude Code, and Sequel Ace
 # Optimized for Apple Silicon (M4 Pro)
 
 set -e  # Exit on any error
@@ -111,6 +111,24 @@ if ! command -v limactl &> /dev/null; then
     print_status "Lima is used by Trellis for local development VMs"
 else
     print_success "Lima already installed"
+fi
+
+echo ""
+print_status "Step 5.5/9: Installing Ansible and Trellis CLI..."
+# Install Ansible (required for Trellis)
+if ! command -v ansible &> /dev/null; then
+    brew install ansible
+    print_success "Ansible installed"
+else
+    print_success "Ansible already installed"
+fi
+
+# Install Trellis CLI
+if ! command -v trellis &> /dev/null; then
+    brew install roots/tap/trellis-cli
+    print_success "Trellis CLI installed"
+else
+    print_success "Trellis CLI already installed"
 fi
 
 echo ""
@@ -297,6 +315,8 @@ echo "  ✓ Homebrew (package manager)"
 echo "  ✓ Git $(git --version | cut -d' ' -f3)"
 echo "  ✓ GitHub CLI (gh)"
 echo "  ✓ Lima (limactl) - for Trellis VMs"
+echo "  ✓ Ansible - automation tool for Trellis"
+echo "  ✓ Trellis CLI - Roots Trellis management"
 echo "  ✓ PHP $(php --version | head -n 1 | cut -d' ' -f2)"
 echo "  ✓ Composer"
 echo "  ✓ MariaDB - database server"
@@ -332,6 +352,8 @@ echo "  code .                      # Open current directory in VS Code"
 echo "  claude                      # Start Claude Code for AI-assisted coding"
 echo "  gh repo clone <repo>        # Clone GitHub repository"
 echo "  limactl start               # Start Lima VM for Trellis"
+echo "  trellis init                # Initialize new Trellis project"
+echo "  trellis new <site>          # Create new Trellis site"
 echo "  valet park                  # Serve all sites in current directory"
 echo "  valet link <name>           # Create a symbolic link to serve site"
 echo "  mysql -u root               # Connect to MariaDB"
@@ -341,6 +363,12 @@ echo "For Roots Sage projects:"
 echo "  composer create-project roots/sage <project-name>"
 echo "  cd <project-name> && composer install"
 echo "  pnpm install && pnpm dev"
+echo ""
+echo "For Roots Trellis projects:"
+echo "  trellis new mysite          # Creates Trellis + Bedrock + Sage"
+echo "  cd mysite/trellis"
+echo "  trellis up                  # Start local development environment"
+echo "  trellis open                # Open site in browser"
 echo ""
 echo "For Laravel Valet projects:"
 echo "  cd ~/Sites"
