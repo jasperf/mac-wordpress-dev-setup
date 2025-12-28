@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Mac M4 Pro Web Developer Setup Script
-# This script installs: Xcode CLI Tools, Homebrew, Git, GitHub CLI, Lima, PHP, Composer, MariaDB, Laravel Valet, WP-CLI, Node.js (with fnm), pnpm, VS Code, Docker, Warp, and Sequel Ace
+# This script installs: Xcode CLI Tools, Homebrew, Git, GitHub CLI, Lima, PHP, Composer, MariaDB, Laravel Valet, WP-CLI, Node.js (with fnm), pnpm, VS Code, Docker, Warp, Claude, and Sequel Ace
 # Optimized for Apple Silicon (M4 Pro)
 
 set -e  # Exit on any error
@@ -278,6 +278,15 @@ else
     print_success "Sequel Ace already installed"
 fi
 
+# Install Claude Code (CLI tool for agentic coding)
+print_status "Installing Claude Code..."
+if ! brew list --cask claude-code &> /dev/null; then
+    brew install --cask claude-code
+    print_success "Claude Code installed"
+else
+    print_success "Claude Code already installed"
+fi
+
 echo ""
 echo "================================================"
 print_success "🎉 Setup Complete!"
@@ -299,6 +308,7 @@ echo "  ✓ pnpm $(pnpm --version)"
 echo "  ✓ Visual Studio Code"
 echo "  ✓ Docker Desktop"
 echo "  ✓ Warp Terminal"
+echo "  ✓ Claude Code - AI coding assistant CLI"
 echo "  ✓ Sequel Ace - database management GUI"
 echo ""
 echo "Next steps:"
@@ -319,6 +329,7 @@ echo "  fnm use <version>           # Switch Node version"
 echo "  pnpm install                # Install dependencies (faster than npm)"
 echo "  composer install            # Install PHP dependencies"
 echo "  code .                      # Open current directory in VS Code"
+echo "  claude                      # Start Claude Code for AI-assisted coding"
 echo "  gh repo clone <repo>        # Clone GitHub repository"
 echo "  limactl start               # Start Lima VM for Trellis"
 echo "  valet park                  # Serve all sites in current directory"
