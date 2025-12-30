@@ -2,9 +2,33 @@
 
 Automated development environment setup for macOS, optimized for WordPress development with modern tooling and the Roots.io ecosystem (Trellis, Bedrock, Sage).
 
+## Table of Contents
+
+- [What This Does](#what-this-does)
+- [Who This Is For](#who-this-is-for)
+- [What Gets Installed](#what-gets-installed)
+- [Prerequisites](#prerequisites)
+- [Quick Start](#quick-start)
+- [Post-Installation Setup](#post-installation-setup)
+- [Common Workflows](#common-workflows)
+- [Useful Commands Reference](#useful-commands-reference)
+- [Troubleshooting](#troubleshooting)
+- [Architecture](#architecture)
+- [Updating Installed Tools](#updating-installed-tools)
+- [Uninstallation](#uninstallation)
+- [Contributing](#contributing)
+- [License](#license)
+- [Resources](#resources)
+
 ## What This Does
 
-This repository contains shell scripts that automate the installation and configuration of a complete WordPress development environment on macOS. It's specifically optimized for Apple Silicon (M-series) Macs but works on Intel Macs too.
+This repository contains three shell scripts that automate the installation and configuration of a complete WordPress development environment on macOS:
+
+1. **`mac-wp-dev-setup.sh`** - Main setup script (installs all development tools)
+2. **`setup-github-ssh.sh`** - GitHub SSH key generation and configuration (optional)
+3. **`setup-ohmyzsh.sh`** - Oh My Zsh installation with smart configuration preservation (optional)
+
+The setup is specifically optimized for Apple Silicon (M-series) Macs but works on Intel Macs too.
 
 ## Who This Is For
 
@@ -46,6 +70,9 @@ This repository contains shell scripts that automate the installation and config
 - **Claude Code** - AI coding assistant CLI
 - **Sequel Ace** - Database management GUI
 
+### Shell Enhancement
+- **Oh My Zsh** - Zsh configuration framework with themes and plugins (optional)
+
 ## Prerequisites
 
 - macOS (tested on Apple Silicon, works on Intel)
@@ -68,7 +95,7 @@ cd mac-wordpress-dev-setup
 ### 2. Make Scripts Executable
 
 ```bash
-chmod +x mac-wp-dev-setup.sh setup-github-ssh.sh
+chmod +x mac-wp-dev-setup.sh setup-github-ssh.sh setup-ohmyzsh.sh
 ```
 
 ### 3. Run Main Setup
@@ -96,7 +123,26 @@ This will:
 - Guide you through adding it to GitHub
 - Test the connection
 
-### 5. Restart Terminal
+### 5. Setup Oh My Zsh (Optional but Recommended)
+
+Enhance your terminal with Oh My Zsh for better prompts, themes, and plugins:
+
+```bash
+./setup-ohmyzsh.sh
+```
+
+This will:
+- Backup your current `.zshrc` configuration
+- Install Oh My Zsh framework
+- Set the `af-magic` theme (shows full path + git branch)
+- Preserve all your PATH configurations (Homebrew, Composer, fnm, VS Code)
+
+The `af-magic` theme provides:
+- Full current directory path
+- Git branch name and status indicators
+- Clean, informative prompt
+
+### 6. Restart Terminal
 
 After installation completes:
 
@@ -301,6 +347,21 @@ brew services start mariadb
 
 # Restart MariaDB
 brew services restart mariadb
+```
+
+### Oh My Zsh Theme or Configuration Issues
+
+```bash
+# Restore from backup
+cp ~/.zshrc.backup-<timestamp> ~/.zshrc
+source ~/.zshrc
+
+# Or reinstall
+./setup-ohmyzsh.sh
+
+# Change theme manually
+# Edit ~/.zshrc and change ZSH_THEME="af-magic" to another theme
+# Popular alternatives: "robbyrussell", "agnoster", "bira"
 ```
 
 ## Architecture
